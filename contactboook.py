@@ -1,52 +1,82 @@
-contact = {}
-
+import streamlit as st
+import time
 
 def display_contact():
-    print("Name\t\tContact Number")
-    for key in contact:
-        print("{}\t\t{}".format(key, contact.get(key)))
+    st.write("Name\t\t: Contact Number")
+    for key in session.contact:
+        st.write("{}\t\t{}".format(key, session.contact.get(key)))
 
-
-while True:
-    try:
-        choice = int(input("1. Add new Contact \n 2. Search new Contact \n 3.Display Contact\n 4. Edit Contact \n 5. Delete Contact\n 6. Exit\n Enter Your Choice  "))
-        if choice in range(1, 7):
-            if choice == 1:
-                Name = input("Enter the contact name")
-                Phone = input("Enter the Mobile Number")
-                contact[Name] = Phone
-            elif choice == 2:
-                search_name = input("Enter the contact ")
-                if search_name in contact:
-                    print(search_name, "'s contact number is", contact[search_name])
-                else:
-                    print("Name is not found in contact book")
-            elif choice == 3:
-                if not contact:
-                    print("empty contact book")
-                else:
-                    display_contact()
-            elif choice == 4:
-                edit_contact = input("Enter the contact to be edited")
-                if edit_contact in contact:
-                    phone = input("enter mobile number")
-                    contact[edit_contact] = phone
-                    print("contact updated")
-                    display_contact()
-                else:
-                    print("Name is not found in contact book")
-            elif choice == 5:
-                del_contact = input("Enter the contact to be deleted")
-                if del_contact in contact:
-                    confirm = input("Do you want to delete this contact y/n?")
-                    if confirm == 'y' or confirm == 'Y':
-                        contact.pop(del_contact)
-                    display_contact()
-                else:
-                    print("Name is not found in the contact book")
-            elif choice == 6:
-                break
+def handle_form_submit():
+    name = st.session_state.name
+    phone = st.session_state.phone
+    action = st.session_state.action
+    
+    if action == "Add new Contact":
+        session.contact[name] = phone
+        st.success("Contact added successfully!")
+    elif action == "Search Contact":
+        if name in session.contact:
+            st.success(f"{name}'s contact number is {session.contact[name]}")
         else:
-            print("Invalid choice. Please enter a number between 1 and 6.")
-    except ValueError:
-        print("Invalid input. Please enter a number.")
+            st.error("Name is not found in contact book")
+    elif action == "Edit Contact":
+        if name in session.contact:
+            session.contact[name] = phone
+            st.success("Contact updated successfully!")
+        else:
+            st.error("Name is not found in contact book")
+    elif action == "Delete Contact":
+        if name in session.contact:
+            session.contact.pop(name)
+            st.success("Contact deleted successfully!")
+        else:
+            st.error("Name is not found in contact book")
+
+def home():
+    st.title("Welcome to BanoQabil 2.0 Final Project !")
+    st.write("Contact Management Diary ")
+
+def about():
+    st.title("About Page")
+    st.write("Welcome to the About Page!")
+    st.write("This is our final Project of BanoQabil.")
+    st.write("Loading:")
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+    for i in range(100):
+        progress_bar.progress(i + 1)
+        status_text.text(f"Progress: {i + 1}%")
+        time.sleep(0.1)
+    st.title("Contact Management System")
+    with st.form(key="contact_form"):
+        action = st.selectbox("Choose an option:", ["Add new Contact", "Search Contact", "Edit Contact", "Delete Contact"], key="action")
+        name = st.text_input("Enter the contact name", key="name")
+        phone = st.text_input("Enter the Mobile Number", key="phone")
+        st.form_submit_button("Submit", on_click=handle_form_submit)
+    
+    display_contact()
+
+def contact():
+    st.title("Contact Page")
+    st.write("Welcome (In that Project 3 Members are included Name are mention below) !")
+    st.write("Muhammad Musaddiq Maooz Bin Abdul Moid And Anas Bangesh .")
+
+def main():
+    st.sidebar.title("Navigation")
+    page = st.sidebar.radio("Go to", ("Home", "About", "Contact"))
+
+    if page == "Home":
+        home()
+    elif page == "About":
+        about()
+    elif page == "Contact":
+        contact()
+
+# Use a session state to store the contact dictionary
+session = st.session_state
+if "contact" not in session:
+    session.contact = {}
+
+if __name__ == "__main__":
+    main()
+

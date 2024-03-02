@@ -41,6 +41,9 @@ def handle_form_submit():
 def home():
     st.title("Welcome to BanoQabil 2.0 Final Project !")
     st.write("Contact Management Diary ")
+    st.write("Campus Daftar Jamat-e-Islami Korangi")
+    st.write("Instructor: Ghufran Kamaluddin")
+    st.write("Timing 7-9 (Sat-Sun)")
     st.markdown(
         """
         <style>
@@ -109,8 +112,8 @@ def contact():
 
 # Function to define the main behavior of the app
 def main():
-    st.sidebar.title("Navigation")
-    page = st.sidebar.radio("Go to", ("Home", "About", "Contact"))
+    st.sidebar.title("MENU")
+    page = st.sidebar.radio("Click on", ("Home", "About", "Contact"))
 
     if page == "Home":
         home()
@@ -126,5 +129,3 @@ if "contact" not in session:
 
 if __name__ == "__main__":
     main()
-
-    
